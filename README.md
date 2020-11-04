@@ -38,3 +38,4 @@ In addition, it enables to easily add more possible commands in the future witho
 <img src="https://github.com/marinapassov/silent-auction/raw/master/basic%20diagram.jpg"/>
 
 ### Assumptions
+for simplicity, assuming the auction ends at the same day the item is listed
