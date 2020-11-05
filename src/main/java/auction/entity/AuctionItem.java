@@ -1,18 +1,26 @@
 package auction.entity;
 
+import application.PropertiesHolder;
+
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Represents and item in an auction
  */
 public class AuctionItem {
+
     final private String description;
     final private LocalDateTime startAuctionDate, endAuctionDate;
+
+    final private String itemId;
 
     private double currPrice;
     private String bidderId = "";
 
-    public AuctionItem(String description, double startPrice, LocalDateTime startAuctionDate, LocalDateTime endAuctionDate) {
+
+    public AuctionItem(String itemId, String description, double startPrice, LocalDateTime startAuctionDate, LocalDateTime endAuctionDate) {
+        this.itemId = itemId;
         this.description = description;
         this.currPrice = startPrice;
         this.startAuctionDate = startAuctionDate;
@@ -44,6 +52,9 @@ public class AuctionItem {
         return responseCode;
     }
 
+    public String getItemId() {
+        return itemId;
+    }
 
     public String getBidderId() {
         return bidderId;
@@ -53,6 +64,9 @@ public class AuctionItem {
         return currPrice;
     }
 
+    public String getDescription() {
+        return description;
+    }
     public LocalDateTime getStartAuctionDate() {
         return startAuctionDate;
     }
@@ -63,6 +77,9 @@ public class AuctionItem {
 
     public String toString()
     {
-        return "DESCRIPTION: " + description + " PRICE: "+ currPrice + "END_DATE: "+ endAuctionDate;
+        String dateTimeFormatStr = PropertiesHolder.getPropertiesHolderInst().getPropertyString("dateTimeFormat");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateTimeFormatStr);
+        return "#ITEM_ID: "+ itemId+ " #DESCRIPTION: " + description + " #PRICE: "+ currPrice + " #END_DATE: "+
+                endAuctionDate.format(formatter);
     }
 }

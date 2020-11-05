@@ -8,6 +8,7 @@ import auction.requestHandler.RequestHandler;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.Timer;
@@ -37,7 +38,13 @@ public class Auction extends Thread{
      */
     public void stopAuction(){
         isAuctionRunning = false;
-        this.interrupt();//interrupts serverSocket.accept() blocking call
+
+        //closing server socket to release thread from server.accept()
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -45,7 +52,7 @@ public class Auction extends Thread{
      */
     public void run(){
 
-        final int AUTO_BID_FIXED_RATE = 300000;
+        int AUTO_BID_FIXED_RATE = PropertiesHolder.getPropertiesHolderInst().getPropertyInt("autoBidFixedRate");
         Timer autoBidTimer = new Timer();
         AutomaticBot autoBot = new AutomaticBot();
 
@@ -59,12 +66,19 @@ public class Auction extends Thread{
         autoBidTimer.scheduleAtFixedRate(autoBot, 0, AUTO_BID_FIXED_RATE);
 
         //The auction thread is listening for a bidder/administrator connection socket
-        while (isAuctionRunning){
-            try{
+        while (isAuctionRunning) {
+            try {
                 //Call accept() to receive the next connection
                 serverClientSocket = serverSocket.accept();
-                clientThread = new ClientSocketListener(serverClientSocket, requestHandler);
-                clientThread.start();
+
+                if (serverClientSocket != null) {
+                    clientThread = new ClientSocketListener(serverClientSocket, requestHandler);
+                    clientThread.start();
+                }
+            }
+            catch (SocketException e)
+            {
+             //This exception occurs when socket is closed (expected)
             }
             catch (IOException e)
             {
@@ -100,7 +114,7 @@ public class Auction extends Thread{
     {
         auctionItemsHandler.addNewItem(itemId, desc, startPrice, startAuctionDate,  endAuctionDate);
        
-        return "New item has been added to auction";
+        return "New item has been added to auction\n";
     }
 
     /**
@@ -118,7 +132,19 @@ public class Auction extends Thread{
         if (checkBidderAuthorisation(bidderId,authToken))
             responseMessage = auctionItemsHandler.listItems();
         else
-            responseMessage = "ERROR: Invalid token";
+            responseMessage = "ERROR: Invalid token\n";
+
+        return responseMessage;
+    }
+
+    /**
+     * list items for administrator
+     * @return string with list of items
+     */
+    public String listItemsAdmin(){
+        String responseMessage;
+
+        responseMessage = auctionItemsHandler.listItemsAdmin();
 
         return responseMessage;
     }
@@ -140,7 +166,7 @@ public class Auction extends Thread{
         if (checkBidderAuthorisation(bidderId, authToken))
             responseMessage = auctionItemsHandler.placeBid(bidderId, itemId, bidPrice);
         else
-            responseMessage = "ERROR: Invalid token";
+            responseMessage = "ERROR: Invalid token\n";
 
         return responseMessage;
     }
@@ -171,7 +197,7 @@ public class Auction extends Thread{
             int randomIndex;
             double newPrice;
             Random randomInstance;
-
+            String itemId;
             AuctionItem currItem;
 
             int numOfItems = auctionItemsHandler.getNumberOfAuctionItems();
@@ -181,12 +207,13 @@ public class Auction extends Thread{
 
                 randomInstance = new Random();
                 randomIndex = randomInstance.nextInt(numOfItems);
-                currItem = auctionItemsHandler.getAuctionItemByKeyIndex(randomIndex);
+                itemId = auctionItemsHandler.getAuctionItemIdByIndex(randomIndex);
+                currItem = auctionItemsHandler.getAuctionItemByKey(itemId);
 
                 //raising the price by random amount
                 newPrice = currItem.getCurrPrice() + randomInstance.nextInt(MAX_UP_BID);
 
-                auctionItemsHandler.placeBid(BIDDER_ID, currItem.getBidderId(), newPrice);
+                String response = auctionItemsHandler.placeBid(BIDDER_ID, itemId, newPrice);
             }
         }
     }

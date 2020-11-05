@@ -8,8 +8,8 @@ import java.util.regex.Pattern;
  * Represents an abstract Command
  */
 abstract public class Command {
-    static protected String commandPrefix;
-    static protected Pattern commandPattern;
+    protected String commandPrefix;
+    protected Pattern commandPattern;
 
     public Command(){
         setCommandPrefix();
@@ -46,14 +46,14 @@ abstract public class Command {
      */
     public String getInvalidCommandText()
     {
-        return "Invalid command";
+        return "Invalid command\n";
     }
 
     /**
      * Returns command prefix that is used to identify the specific command
      * @return returns the prefix string
      */
-    static public String getCommandPrefix()
+    public String getCommandPrefix()
     {
         return commandPrefix;
     }

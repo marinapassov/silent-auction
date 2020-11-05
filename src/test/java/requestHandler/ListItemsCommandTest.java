@@ -18,7 +18,7 @@ class ListItemsCommandTest {
     @Test
     void testGetInvalidCommandText() {
         ListItemsCommand listItemsInstance =  new ListItemsCommand();
-        String expectedResult = "Invalid command";
+        String expectedResult = "Invalid command\n";
         String commandStr = listItemsInstance.getInvalidCommandText();
         assertEquals(expectedResult, commandStr);
     }

@@ -14,9 +14,9 @@ public class AuctionItemsHandler {
         auctionItems = new HashMap<>();
 
         //TODO: start temp
-        auctionItems.put("item1", new AuctionItem("item no 1", 0.0, LocalDateTime.now(),(LocalDateTime.now()).plusMinutes(5)));
-        auctionItems.put("item2", new AuctionItem("item no 2", 0.0, LocalDateTime.now(),(LocalDateTime.now()).plusMinutes(5)));
-        auctionItems.put("item3", new AuctionItem("item no 3", 0.0, LocalDateTime.now(),(LocalDateTime.now()).plusMinutes(5)));
+        auctionItems.put("item1", new AuctionItem("item1", "item no 1", 0.0, LocalDateTime.now(),(LocalDateTime.now()).plusMinutes(5)));
+        auctionItems.put("item2", new AuctionItem("item2", "item no 2", 0.0, LocalDateTime.now(),(LocalDateTime.now()).plusMinutes(5)));
+        auctionItems.put("item3", new AuctionItem("item3", "item no 3", 0.0, LocalDateTime.now(),(LocalDateTime.now()).plusMinutes(5)));
         //end temp
     }
 
@@ -30,7 +30,7 @@ public class AuctionItemsHandler {
      */
     public void addNewItem(String itemId, String desc, double startPrice, LocalDateTime startAuctionDate, LocalDateTime endAuctionDate)
     {
-        auctionItems.put(itemId, new AuctionItem(desc, startPrice, startAuctionDate, endAuctionDate));
+        auctionItems.put(itemId, new AuctionItem(itemId, desc, startPrice, startAuctionDate, endAuctionDate));
 
     }
 
@@ -40,14 +40,28 @@ public class AuctionItemsHandler {
      */
     public String listItems()
     {
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(stringWriter);
+        StringBuilder stringBuilder = new StringBuilder();
 
         //goes over all the auction items and gets their details
         auctionItems.forEach((itemId, currItem) ->
-                printWriter.println("itemId: "+ itemId + currItem));
+            stringBuilder.append(currItem).append("\n"));
 
-        return printWriter.toString();
+        return stringBuilder.toString();
+    }
+
+    /**
+     * Creates list of the auction items for Administrator view
+     * @return string with list of items for auction
+     */
+    public String listItemsAdmin()
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        //goes over all the auction items and gets their details
+        auctionItems.forEach((itemId, currItem) ->
+                stringBuilder.append(currItem).append(" #BIDDER_ID:").append(currItem.getBidderId()).append("\n"));
+
+        return stringBuilder.toString();
     }
 
     public int getNumberOfAuctionItems()
@@ -59,10 +73,9 @@ public class AuctionItemsHandler {
         return auctionItems.get(itemKey);
     }
 
-    public AuctionItem getAuctionItemByKeyIndex(int keyIndex)
+    public String getAuctionItemIdByIndex(int keyIndex)
     {
-        String itemKey =  (String)auctionItems.keySet().toArray()[keyIndex];
-        return getAuctionItemByKey(itemKey);
+        return (String)auctionItems.keySet().toArray()[keyIndex];
     }
 
     /**
@@ -82,6 +95,7 @@ public class AuctionItemsHandler {
 
         if (currItem != null)
         {
+
             //check if the item is still in auction
             if (currItem.getEndAuctionDate().isAfter(LocalDateTime.now())) {
 
@@ -101,7 +115,7 @@ public class AuctionItemsHandler {
         }
         else
         {
-            responseMessage = "ERROR: Invalid item id";
+            responseMessage = "ERROR: Invalid item id\n";
         }
 
         return responseMessage;

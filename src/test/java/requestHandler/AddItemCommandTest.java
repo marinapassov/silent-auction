@@ -22,7 +22,7 @@ class AddItemCommandTest {
     @Test
     void testGetInvalidCommandText() {
         AddItemCommand addItemInstance =  new AddItemCommand();
-        String expectedResult = "Invalid command";
+        String expectedResult = "Invalid command\n";
         String commandStr = addItemInstance.getInvalidCommandText();
         assertEquals(expectedResult, commandStr);
     }

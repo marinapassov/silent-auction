@@ -10,7 +10,7 @@ public class App {
     public static void main(String[] args) {
 
         if (args.length == 0) {
-            System.out.println("Invalid command");
+            System.out.println("Invalid command\n");
             printMenuOptions();
         } else {
             parseAndExecuteCommand(args);
@@ -48,7 +48,7 @@ public class App {
                         args[BIDDER_LAST_NAME_IND]);//blocking call
 
             }else{
-                bufferedWriter.write("Invalid command");
+                bufferedWriter.write("Invalid command\n");
                 bufferedWriter.flush();
                 printMenuOptions();
             }

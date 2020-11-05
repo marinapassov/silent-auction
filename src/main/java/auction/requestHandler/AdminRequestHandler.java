@@ -15,6 +15,9 @@ public class AdminRequestHandler extends RequestHandler {
         //initializes commands
         menuCommands = new HashMap<>();
 
-        menuCommands.put(AddItemCommand.getCommandPrefix(), new AddItemCommand());
+        Command currCommand = new AddItemCommand();
+        menuCommands.put(currCommand.getCommandPrefix(), currCommand);
+        currCommand = new ListItemsAdminCommand();
+        menuCommands.put(currCommand.getCommandPrefix(), currCommand);
     }
 }

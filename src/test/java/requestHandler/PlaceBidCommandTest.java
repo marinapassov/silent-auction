@@ -19,7 +19,7 @@ class PlaceBidCommandTest {
     @Test
     void testGetInvalidCommandText() {
         PlaceBidCommand placeBidInstance = new PlaceBidCommand();
-        String expectedResult = "Invalid command";
+        String expectedResult = "Invalid command\n";
         String commandStr = placeBidInstance.getInvalidCommandText();
         assertEquals(expectedResult, commandStr);
     }

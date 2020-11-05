@@ -17,8 +17,10 @@ public class BidderRequestHandler extends RequestHandler {
         //initializes commands
         menuCommands = new HashMap<>();
 
-        menuCommands.put(ListItemsCommand.getCommandPrefix(), new ListItemsCommand());
-        menuCommands.put(PlaceBidCommand.getCommandPrefix(), new PlaceBidCommand());
+        Command currCommand = new ListItemsCommand();
+        menuCommands.put(currCommand.getCommandPrefix(), currCommand);
+        currCommand = new PlaceBidCommand();
+        menuCommands.put(currCommand.getCommandPrefix(), currCommand);
 
     }
 }

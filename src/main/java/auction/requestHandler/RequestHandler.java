@@ -86,26 +86,28 @@ abstract public class RequestHandler {
     public String handleRequest(String clientMessage){
 
         String commandName;
-        String response = "";
+        String response;
         int spaceInd;
         Command currCommand;
 
         //checks if the bidder wants to exit
-        if (clientMessage.equals("EXIT"))
+        if (clientMessage.equalsIgnoreCase("EXIT"))
         {
             isToExit = true;
             response = "GOODBYE";
         }else {
             //parses the request string
-            if ((spaceInd = clientMessage.indexOf(' ')) > 0) {
-                commandName = clientMessage.substring(0, spaceInd);
-                currCommand = menuCommands.get(commandName);
+            spaceInd = clientMessage.length();
+            if(clientMessage.indexOf(' ') > 0)
+                spaceInd = clientMessage.indexOf(' ');
 
-                if (currCommand != null) {
-                    response = currCommand.execute(clientMessage, auctionInstance);
-                } else {
-                    response = printoutMenu();
-                }
+            commandName = clientMessage.substring(0, spaceInd);
+            currCommand = menuCommands.get(commandName);
+
+            if (currCommand != null) {
+                response = currCommand.execute(clientMessage, auctionInstance);
+            } else {
+                response = printoutMenu();
             }
         }
 
