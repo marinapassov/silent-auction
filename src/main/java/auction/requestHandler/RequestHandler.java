@@ -2,8 +2,6 @@ package auction.requestHandler;
 
 import auction.entity.Auction;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Map;
 
@@ -44,7 +42,7 @@ abstract public class RequestHandler {
      */
     public String getWelcomeMessage()
     {
-        return "Welcome!\n"+printoutMenu();
+        return "\nWelcome! Please type one of the following commands\n\n"+printoutMenu();
     }
 
     /**
@@ -61,20 +59,22 @@ abstract public class RequestHandler {
      */
     private void setAvailableCommandsMenuStr()
     {
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(stringWriter);
+        StringBuffer stringBuffer = new StringBuffer();
+
         Collection<Command> commands = menuCommands.values();
 
         //goes over all the auction items and gets their details
-        for (Command currCommand : commands) {
-            printWriter.println(currCommand.toString());
-        }
+        commands.forEach(command -> {
+            stringBuffer.append(command.toString());
+            stringBuffer.append('\n');
+        });
+
 
         //last option is EXIT
-        printWriter.println("EXIT");
+        stringBuffer.append("EXIT\n");
 
         //stores in a variable for future use
-        availableCommandsMenuStr = printWriter.toString();
+        availableCommandsMenuStr = stringBuffer.toString();
 
     }
 
