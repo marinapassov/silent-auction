@@ -14,6 +14,8 @@ plugins {
     id 'application'
 }
 
+version = "1.0"
+
 compileJava {
     sourceCompatibility = '1.8'
     targetCompatibility = '1.8'
@@ -46,3 +48,13 @@ test {
     // Use junit platform for unit tests
     useJUnitPlatform()
 }
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'application.App'
+    }
+
+    from { configurations.runtimeClasspath.collect {it.isDirectory() ? it : zipTree (it)}}
+
+}
+
