@@ -2,10 +2,7 @@ package auction.entity;
 
 import application.PropertiesHolder;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.time.LocalDateTime;
 
@@ -25,10 +22,8 @@ public class Bidder {
 
     /**
      * Starts and manages a client socket with the auction
-     * @param bufferedReader io stream to read communication
-     * @param bufferedWriter io stream to write communication
      */
-    public void startAuction(BufferedReader bufferedReader, BufferedWriter bufferedWriter)
+    public void startAuction()
     {
         DataInputStream socketInStream;
         DataOutputStream socketOutStream;
@@ -36,6 +31,7 @@ public class Bidder {
         boolean isToExit = false;
         String bidderRequest, requestResponse;
         PropertiesHolder propertiesHolderInst = PropertiesHolder.getPropertiesHolderInst();
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 
         registerAuction();//getting valid token
 
@@ -45,7 +41,12 @@ public class Bidder {
             socketInStream = new DataInputStream(socket.getInputStream());
             socketOutStream = new DataOutputStream(socket.getOutputStream());
 
+            //Printing welcome message
+            requestResponse = socketInStream.readUTF();
+            System.out.println(requestResponse);
+
             while (!isToExit) {
+
                 bidderRequest = bufferedReader.readLine();
 
                 socketOutStream.writeUTF(bidderRequest);
@@ -55,19 +56,18 @@ public class Bidder {
 
                 if (!requestResponse.isEmpty()) {
 
-                    bufferedWriter.write(requestResponse);
-                    bufferedWriter.flush();
+                    System.out.println(requestResponse);
 
-                    if (bidderRequest.equals("EXIT"))
+                    if (bidderRequest.equalsIgnoreCase("EXIT"))
                         isToExit = true;
-
                 }
             }
             socketInStream.close();
             socketOutStream.close();
             socket.close();
         }catch(Exception e){
-            System.out.println(e.getMessage());
+            //TODO: change text
+            System.out.println("Error in bidder (startAuction): "+e.getMessage());
         }
 
     }

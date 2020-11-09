@@ -4,8 +4,8 @@ import auction.requestHandler.AdminRequestHandler;
 import auction.requestHandler.RequestHandler;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  * This class represents the administrator role in the silent auction.
@@ -17,10 +17,8 @@ public class Administrator {
 
     /**
      * Creates the auction socket and handles administrator commands
-     * @param bufferedReader instance of buffered reader to get messages from user
-     * @param bufferedWriter instance of buffered writer to write messages to user
      */
-    public void startAuction(BufferedReader bufferedReader, BufferedWriter bufferedWriter)
+    public void startAuction()
     {
         auctionInstance = new Auction();
 
@@ -33,7 +31,7 @@ public class Administrator {
         // if all is good-> continue
         auctionInstance.startAuction();
 
-        handleAdminConsole(bufferedReader, bufferedWriter);//blocking, ends when admin writes "EXIT"
+        handleAdminConsole();//blocking, ends when admin writes "EXIT"
     }
 
     /**
@@ -46,18 +44,16 @@ public class Administrator {
 
     /**
      * Handles administrator's requests
-     * @param bufferedReader instance of buffered reader to get messages from user
-     * @param bufferedWriter instance of buffered writer to write messages to user
      */
-    private void handleAdminConsole(BufferedReader bufferedReader, BufferedWriter bufferedWriter)
+    private void handleAdminConsole()
     {
         String adminRequest, requestResponse;
 
         RequestHandler adminRequestHandler  = new AdminRequestHandler(auctionInstance);
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 
         try{
-            bufferedWriter.write(adminRequestHandler.getWelcomeMessage());
-            bufferedWriter.flush();
+            System.out.println(adminRequestHandler.getWelcomeMessage());
 
             // Continue until auction ends
             while (!adminRequestHandler.getIsToExit()) {
@@ -66,22 +62,15 @@ public class Administrator {
 
                 // Checks if there is a response and it's not an empty string
                 if (requestResponse != null && !requestResponse.isEmpty()) {
-                    bufferedWriter.write(requestResponse);
-                    bufferedWriter.flush();
+                    System.out.println(requestResponse);
                 }
             }
             stopAuction();
 
         }catch(Exception ex){
             //write the exception to the screen
-            try {
-                bufferedWriter.write(ex.getMessage());
-                bufferedWriter.flush();
-                stopAuction();
-            } catch (IOException e) {
-                //do nothing
-                //TODO: log error
-            }
+            //TODO: change text
+            System.out.println(ex.getMessage());
         }finally{
             stopAuction();
         }
